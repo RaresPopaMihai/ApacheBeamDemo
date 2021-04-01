@@ -1,0 +1,10 @@
+beam\unittest\WordCountPipelineTestSuite.class
+beam\tutorial\application\App.class
+beam\test\Main$1.class
+beam\test\CountWords.class
+beam\test\Main$WordCountOptions.class
+beam\unittest\PipelineTest.class
+beam\test\CountWords$ExtractWords.class
+beam\test\Main.class
+beam\tutorial\application\WordCount.class
+beam\tutorial\application\App$CountWordsOptions.class
