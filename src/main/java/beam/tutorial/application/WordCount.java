@@ -18,16 +18,7 @@ public class WordCount extends PTransform<PCollection<String>,PCollection<KV<Str
              .apply(MapElements.into(TypeDescriptors.lists(TypeDescriptors.strings())).via(line -> Arrays.asList(line.split(" "))))
              .apply(Flatten.iterables())
              .apply(MapElements.into(TypeDescriptors.strings())
-                     .via(word-> {
-                         if (word.contains(".")){
-                             return word.substring(0,word.indexOf("."));
-                         }
-
-                         else if (word.contains(","))
-                             return word.substring(0,word.indexOf(","));
-                         else
-                             return word;
-                     }))
+                     .via(WordUtils::getOnlyWord))
              .apply(Count.perElement());
     }
 }
