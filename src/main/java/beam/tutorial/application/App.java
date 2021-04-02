@@ -36,18 +36,35 @@ public class App {
         @Default.String("output/OUT-WORDS-COUNT.txt")
         String getOutputWordsCount();
         void setOutputWordsCount(String pattern);
+
+       @Description("Output File Words Count")
+       @Default.String("output/OUT-WORDS-REVERSE.txt")
+       String getOutputWordsReverse();
+       void setOutputWordsReverse(String pattern);
     }
 
     public static void main(String[] args) {
         CountWordsOptions options = PipelineOptionsFactory.fromArgs(args).withValidation().as(CountWordsOptions.class);
         Pipeline pipeline = Pipeline.create();
+        PCollection<String> initialOutput = pipeline.apply("Read from file", TextIO.read().from(options.getInput()));
         PCollection<String> finalOutput =
-                pipeline.apply("Read from file", TextIO.read().from(options.getInput()))
-                .apply(new WordCount())
+                initialOutput.apply(new WordCount())
                 .apply(MapElements.into(TypeDescriptors.strings()).via(kv->String.format("%s -> %s",kv.getKey(),kv.getValue())));
         finalOutput.apply(TextIO.write().to(options.getOutputWordsCount()).withNumShards(1));
         finalOutput.apply(MapElements.into(TypeDescriptors.strings()).via(kv->kv.split(" ")[0]))
                 .apply(TextIO.write().to(options.getOutputWords()).withNumShards(1));
+
+        initialOutput
+                .apply(new ReversWords())
+                .apply(TextIO.write().to(options.getOutputWordsReverse()).withNumShards(1));
+
+        initialOutput
+                .apply(new ReversWords())
+                .apply(new ReversWords())
+                .apply(TextIO.write().to("output/OUT-REVERTED-WORDS").withNumShards(1));
+
+
+
 
 
         pipeline.run().waitUntilFinish(Duration.millis(5000));
