@@ -58,6 +58,12 @@ public class App {
                 .apply(new ReversWords())
                 .apply(TextIO.write().to(options.getOutputWordsReverse()).withNumShards(1));
 
+        initialOutput
+                .apply(new ReversWords())
+                .apply(new ReversWords())
+                .apply(TextIO.write().to("output/OUT-REVERTED-WORDS").withNumShards(1));
+
+
 
 
 
